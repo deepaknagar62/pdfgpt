@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Form
 from utils.store_data import run
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(category: str = Form(default=None),file: UploadFile = File(...)):
     try:
         if not file.filename.endswith('.pdf'):
             return JSONResponse(status_code=400, content={'error': 'Only PDF files are allowed'})
@@ -23,7 +23,7 @@ async def upload_file(file: UploadFile = File(...)):
         with open(file_path, 'wb+') as destination:
             destination.write(file_content)
         
-        run(file.filename)
+        run(file.filename, category)
         
         os.remove(file_path)
         

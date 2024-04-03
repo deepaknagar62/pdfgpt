@@ -10,10 +10,10 @@ router = APIRouter()
 @router.post("/chat")
 async def ask_question(request: QuestionRequest):
     try:
-        if not request.question :
-            raise HTTPException(status_code=400, detail="question parameter is required")
+        if not request.question or not request.filename:
+            raise HTTPException(status_code=400, detail="filename and question parameters are required")
         
-        answer = answer_question(request.category, request.question)
+        answer = answer_question(request.category,request.filename, request.question)
         
         return JSONResponse(status_code=200, content={"answer": answer})
     except Exception as e:

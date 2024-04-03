@@ -1,17 +1,54 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Depends
 import os
+from mysql import models, database
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
 
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 db_directory = 'database'
 
-@router.get("/category")
-async def get_namespaces():
+@router.get("/files")
+async def get_filenames(db: Session = Depends(get_db)):
     try: 
-        namespaces = [name for name in os.listdir(db_directory) if os.path.isdir(os.path.join(db_directory, name))]
-        return {"namespaces": namespaces}
+        files = db.query(models.Files).all()
+        file_dict = {file.filename: file.createdAt for file in files}
+
+        
+        filename = [name for name in os.listdir(db_directory) 
+                      if os.path.isdir(os.path.join(db_directory, name)) and name != "Categories"]
+
+        filename.sort(key=lambda x: file_dict.get(x, ''), reverse=True)
+        
+        return {"files": filename}
        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+    
+    
+
+db_directory_category = 'database/Categories'
+
+@router.get("/category")
+async def get_categories(db: Session = Depends(get_db)):
+    try: 
+        files = db.query(models.Categories).all()
+        file_dict = {file.filename: file.createdAt for file in files}
+
+        
+        category = [name for name in os.listdir(db_directory_category)
+                       if os.path.isdir(os.path.join(db_directory_category, name))]
+        
+        category.sort(key=lambda x: file_dict.get(x, ''), reverse=True)
+        return {"categories": category}
+       
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")    

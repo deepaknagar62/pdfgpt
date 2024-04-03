@@ -1,5 +1,9 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class QuestionRequest(BaseModel):
-    category: str
+    category: Optional[str] = None
+    filename: str
     question: str
+
+
