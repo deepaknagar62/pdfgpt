@@ -7,8 +7,11 @@ from langchain.chains import RetrievalQAWithSourcesChain
 from langchain_pinecone import PineconeVectorStore
 from langchain_community.vectorstores import FAISS
 import faiss
+from mysql.savefiles import save_history
+from mysql import database
 from dotenv import load_dotenv
 from langchain import PromptTemplate
+
 
 
 prompt_template = """You are helpful information giving QA System and make sure you don't answer anything 
@@ -26,18 +29,22 @@ qa_prompt = PromptTemplate(
 
 
 load_dotenv()
+db = database.SessionLocal()
 db_directory = 'database'
 
 def answer_question(category, namespace , question):
     try:
         
         embeddings = OpenAIEmbeddings(
-            model=os.getenv("PINECONE_MODEL_NAME"),
+            model=os.getenv("MODEL_NAME"),
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
+         
         
+         
         if category is None:
             namespace_directory = os.path.join(db_directory, namespace)
+        
         else:
             namespace_directory = os.path.join(db_directory,category, namespace)
             
@@ -60,8 +67,11 @@ def answer_question(category, namespace , question):
             # return_source_documents=True
         )
 
-        answer = chain.invoke(question)
+        result = chain.invoke(question)
+        answer = result.get( "result",'')
         
-        return answer
+        save_history(namespace, question, answer,db)
+         
+        return result
     except Exception as e:
         raise e

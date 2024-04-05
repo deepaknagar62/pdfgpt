@@ -27,7 +27,7 @@ def run(namespace , category=None):
     docs = text_splitter.split_documents(documents)
     
     embeddings = OpenAIEmbeddings(
-        model=os.getenv("PINECONE_MODEL_NAME"),
+        model=os.getenv("MODEL_NAME"),
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )
     
