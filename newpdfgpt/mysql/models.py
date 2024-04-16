@@ -20,3 +20,15 @@ class Categories(Base):
     filename = Column(String(255),index=True)
     createdAt = Column(String(255), unique=True, index=True)
       
+      
+class ChatHistory(Base):
+    __tablename__ = "ChatHistory"
+    id = Column(Integer,primary_key=True,index=True)
+    filename = Column(String(255),index=True)
+    question = Column(String(2000), index=True)  
+    answer = Column(String(5000), index=True)  
+   
+    
+    
+
+   

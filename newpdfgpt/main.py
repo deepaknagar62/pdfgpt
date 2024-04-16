@@ -17,6 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+database.Base.metadata.create_all(bind=database.engine)   # to create tables automatically if not exist in db
+
 app.include_router(upload.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(category.router, prefix="/api")
