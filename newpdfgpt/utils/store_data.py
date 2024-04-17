@@ -3,13 +3,14 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
-from dotenv import load_dotenv
 from mysql.savefiles import insert_file_name, insert_category
 from mysql import models, database
+from constants import MODEL_NAME,OPENAI_API_KEY
+from logger import setup_logger
 
 
-load_dotenv()
 
+logger = setup_logger()
 db = database.SessionLocal()
 directory = './uploads'
 db_directory = 'database'
@@ -27,8 +28,8 @@ def run(namespace , category=None):
     docs = text_splitter.split_documents(documents)
     
     embeddings = OpenAIEmbeddings(
-        model=os.getenv("MODEL_NAME"),
-        openai_api_key=os.getenv("OPENAI_API_KEY")
+        model=MODEL_NAME,
+        openai_api_key= OPENAI_API_KEY
     )
     
     vectorstore = FAISS.from_documents(docs, embeddings)
@@ -54,7 +55,7 @@ def run(namespace , category=None):
         else:
             insert_category(category,db)        
     
-    print("Data stored in vector database......")
+    logger.info("Data stored in vector database......")
   
     
 

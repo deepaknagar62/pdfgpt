@@ -2,7 +2,11 @@ from fastapi import APIRouter, HTTPException,Depends
 import os
 from mysql import models, database
 from sqlalchemy.orm import Session
+from logger import setup_logger
 
+
+
+logger = setup_logger()
 router = APIRouter()
 
 
@@ -31,6 +35,7 @@ async def get_filenames(db: Session = Depends(get_db)):
         return {"files": filename}
        
     except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
     
     
@@ -51,4 +56,5 @@ async def get_categories(db: Session = Depends(get_db)):
         return {"categories": category}
        
     except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")    

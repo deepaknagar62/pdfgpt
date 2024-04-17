@@ -1,16 +1,13 @@
 import os
-from pinecone import Pinecone, ServerlessSpec
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains import RetrievalQAWithSourcesChain
-from langchain_pinecone import PineconeVectorStore
 from langchain_community.vectorstores import FAISS
-import faiss
 from mysql.savefiles import save_history,get_history_by_filename
 from mysql import database
-from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate 
+from constants import MODEL_NAME,OPENAI_API_KEY
 
 
 
@@ -28,7 +25,6 @@ qa_prompt = PromptTemplate(
 )
 
 
-load_dotenv()
 db = database.SessionLocal()
 db_directory = 'database'
 
@@ -37,8 +33,8 @@ def answer_question(category, namespace , question):
     try:
         
         embeddings = OpenAIEmbeddings(
-            model=os.getenv("MODEL_NAME"),
-            openai_api_key=os.getenv("OPENAI_API_KEY")
+            model=MODEL_NAME,
+            openai_api_key=OPENAI_API_KEY
         )
          
         
@@ -57,7 +53,7 @@ def answer_question(category, namespace , question):
         # query_result = vectorstore.similarity_search(query=question, k=3)
         
         llm = ChatOpenAI(
-            openai_api_key=os.getenv("OPENAI_API_KEY"),
+            openai_api_key=OPENAI_API_KEY,
             model_name='gpt-3.5-turbo',
             temperature=0.1
         )
