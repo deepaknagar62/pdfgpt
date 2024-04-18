@@ -1,9 +1,8 @@
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from routers import upload, chat,category
 from fastapi import FastAPI
-from mysql import database
-from controllers import controller
+from app.mysql import database
+from app.controllers import controller
 
 app = FastAPI()
 

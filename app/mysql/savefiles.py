@@ -2,7 +2,7 @@
 from fastapi import FastAPI,HTTPException, Depends
 from datetime import datetime
 from sqlalchemy.orm import Session
-from mysql import models, database
+from ..mysql.models import files,categories,chatHistory 
 from datetime import datetime
 from logger import setup_logger
 
@@ -15,7 +15,7 @@ current_date_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
 def insert_file_name(filename: str, db: Session):
     try:
-        new_item = models.Files(filename=filename, createdAt=current_date_time)
+        new_item = files.Files(filename=filename, createdAt=current_date_time)
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
@@ -32,7 +32,7 @@ def insert_file_name(filename: str, db: Session):
 
 def insert_category(filename: str, db: Session):
     try:
-        new_item = models.Categories(filename=filename, createdAt=current_date_time)
+        new_item = categories.Categories(filename=filename, createdAt=current_date_time)
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
@@ -47,10 +47,10 @@ def insert_category(filename: str, db: Session):
 
 def save_history(filename: str, question: str, answer:str, db:Session):
     try:
-        chatHistory = models.ChatHistory(filename=filename, question=question, answer=answer)
-        db.add(chatHistory)
+        History = chatHistory.ChatHistory(filename=filename, question=question, answer=answer)
+        db.add(History)
         db.commit()
-        db.refresh(chatHistory)
+        db.refresh(History)
         
         logger.info("chat history saved in mysql databse.........")
         

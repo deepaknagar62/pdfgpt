@@ -4,29 +4,20 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain_community.vectorstores import FAISS
-from mysql.savefiles import save_history,get_history_by_filename
-from mysql import database
-from langchain.prompts import PromptTemplate 
+from ..mysql.savefiles import save_history,get_history_by_filename
+from ..mysql import database
+from ..utils import prompt
 from constants import MODEL_NAME,OPENAI_API_KEY
+from logger import setup_logger
 
 
 
-prompt_template = """You are helpful information giving QA System and make sure you don't answer anything 
-not related to following context. You are always provide useful information & details available in the given context. Use the following pieces of context to answer the question at the end. 
-If you don't know the answer, just say that Hmm, I am not sure, don't try to make up an answer.
+logger = setup_logger()
 
-{context}
-
-Question: {question}
-Helpful Answer:"""
-
-qa_prompt = PromptTemplate(
-    template=prompt_template, input_variables=["context", "question"]
-)
-
+qa_prompt = prompt.prompt
 
 db = database.SessionLocal()
-db_directory = 'database'
+db_directory = './database'
 
  
 def answer_question(category, namespace , question):
@@ -73,4 +64,5 @@ def answer_question(category, namespace , question):
     
         return result
     except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
         raise e

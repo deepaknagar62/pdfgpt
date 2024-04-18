@@ -1,6 +1,6 @@
 import os
 from fastapi import APIRouter, UploadFile, File, Form
-from utils.store_data import run
+from ...utils.store_data import run
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from logger import setup_logger
@@ -8,7 +8,7 @@ from logger import setup_logger
 
 
 
-
+logger = setup_logger()
 router = APIRouter()
 
 
@@ -35,4 +35,5 @@ async def upload_file(category: str = Form(default=None),file: UploadFile = File
         return JSONResponse(status_code=200, content={'message': 'File uploaded successfully', 'file_path': file_path})
     
     except Exception as e:
-        return JSONResponse(status_code=500, content={'error': f'An error occurred: {str(e)}'})
+        logger.error(f"An error occurred: {str(e)}")
+        return JSONResponse(status_code=500, error='Error occured while uploading file..')

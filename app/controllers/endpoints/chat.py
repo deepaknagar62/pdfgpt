@@ -1,10 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from utils.query import answer_question
-from models.model import QuestionRequest
-from mysql import database
-from mysql.savefiles import get_history_by_filename
+from ...utils.answerQuestion import answer_question
+from ...DTO.dto import QuestionRequest
+from ...mysql import database
+from ...mysql.savefiles import get_history_by_filename
+from logger import setup_logger
 
+
+
+
+logger = setup_logger()
 router = APIRouter()
 db = database.SessionLocal()
 
@@ -19,4 +24,5 @@ async def ask_question(request: QuestionRequest):
         
         return JSONResponse(status_code=200, content={"answer": answer})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        logger.error(f"An error occurred: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"Error occured while query..")

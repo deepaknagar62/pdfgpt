@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter
-from routers import upload, chat, category
+from .endpoints import upload, chat, category
 
 router = APIRouter()
 

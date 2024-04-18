@@ -3,8 +3,8 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
-from mysql.savefiles import insert_file_name, insert_category
-from mysql import models, database
+from ..mysql.savefiles import insert_file_name, insert_category
+from ..mysql import models, database
 from constants import MODEL_NAME,OPENAI_API_KEY
 from logger import setup_logger
 
@@ -13,7 +13,7 @@ from logger import setup_logger
 logger = setup_logger()
 db = database.SessionLocal()
 directory = './uploads'
-db_directory = 'database'
+db_directory = './database'
 
 
 def run(namespace , category=None):

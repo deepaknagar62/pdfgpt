@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException,Depends
 import os
-from mysql import models, database
+from ...mysql import database
+from ...mysql.models import files,categories
 from sqlalchemy.orm import Session
 from logger import setup_logger
 
@@ -18,13 +19,13 @@ def get_db():
         db.close()
 
 
-db_directory = 'database'
+db_directory = './database'
 
 @router.get("/files")
 async def get_filenames(db: Session = Depends(get_db)):
     try: 
-        files = db.query(models.Files).all()
-        file_dict = {file.filename: file.createdAt for file in files}
+        allfiles = db.query(files.Files).all()
+        file_dict = {file.filename: file.createdAt for file in allfiles}
 
         
         filename = [name for name in os.listdir(db_directory) 
@@ -36,7 +37,7 @@ async def get_filenames(db: Session = Depends(get_db)):
        
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error occured while fetching the files..")
     
     
 
@@ -45,7 +46,7 @@ db_directory_category = 'database/Categories'
 @router.get("/category")
 async def get_categories(db: Session = Depends(get_db)):
     try: 
-        files = db.query(models.Categories).all()
+        files = db.query(categories.Categories).all()
         file_dict = {file.filename: file.createdAt for file in files}
 
         
@@ -57,4 +58,4 @@ async def get_categories(db: Session = Depends(get_db)):
        
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")    
+        raise HTTPException(status_code=500, detail="Error occured while fetching the categories..")    
