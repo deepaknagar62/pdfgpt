@@ -6,3 +6,5 @@ langchain_text_splitters==0.0.1
 pydantic==2.7.0
 python-dotenv==1.0.1
 SQLAlchemy==2.0.28
+pymysql
+uvicorn 
