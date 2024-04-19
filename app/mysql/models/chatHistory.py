@@ -8,5 +8,5 @@ class ChatHistory(Base):
     id = Column(Integer,primary_key=True,index=True)
     filename = Column(String(255),index=True)
     question = Column(String(2000), index=True)  
-    answer = Column(String(5000), index=True)  
+    answer = Column(String(3000), index=True)  
    
